@@ -1,4 +1,4 @@
-version: "3"
+version: "3.1"
 
 networks:
   laravel:
@@ -6,7 +6,6 @@ networks:
 services:
   nginx:
     image: nginx:stable-alpine
-    container-name: nginx
     ports:
       - "8080:80"
     volumes:
@@ -15,16 +14,17 @@ services:
     depends_on:
       - php
       - mysql
-    networks: 
+    networks:
       - laravel
 
   mysql:
     image: mysql:5.7.22
-    container-name: mysql
     restart: unless-stopped
     tty: true
     ports:
-      - "3306:3306"
+      - "33060:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: homestad
       MYSQL_USER: homestead
@@ -32,17 +32,16 @@ services:
       MYSQL_ROOT_PASSWORD: secret
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
-    networks: 
+    networks:
       - laravel
 
   php:
     build:
       context: .
       dockerfile: Dockerfile
-    container-name: php
     volumes:
       - ./src:/var/www
     ports:
       - "9000:9000"
-    networks: 
+    networks:
       - laravel
